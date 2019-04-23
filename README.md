@@ -1,12 +1,13 @@
-# Микросервис для скачивания файлов
+# Downloading file service
 
-Микросервис помогает работе основного сайта, сделанного на CMS и обслуживает
-запросы на скачивание архивов с файлами. Микросервис не умеет ничего, кроме упаковки файлов
-в архив. Закачиваются файлы на сервер через FTP или админку CMS.
+Service helps the work of the main site, made on the CMS, and serves requests for downloading archives with files. 
+Service can only pack files into the archive. Upload files to the server via FTP or CMS admin panel.
 
-Создание архива происходит на лету по запросу от пользователя. Архив не сохраняется на диске, вместо этого по мере упаковки он сразу отправляется пользователю на скачивание.
+Creating an archive occurs on the fly upon request from the user. 
+The archive is not stored on the disk, instead, as it is packaged, it is immediately sent to the user for download.
 
-От неавторизованного доступа архив защищен хешом в адресе ссылки на скачивание, например: `http://host.ru/archive/3bea29ccabbbf64bdebcc055319c5745/`. Хеш задается названием каталога с файлами, выглядит структура каталога так:
+From unauthorized access, the archive is protected by a hash in the download link address, for example: `http://host.ru/archive/3bea29ccabbbf64bdebcc055319c5745/`. 
+The hash is given by the name of the file directory, the directory structure looks like this:
 
 ```
 - photos
@@ -20,35 +21,37 @@
 ```
 
 
-## Как установить
+## Prerequisites
 
-Для работы микросервиса нужен Python версии не ниже 3.6.
+- Docker 18.0+
 
-```bash
-pip install -r requirements.txt
-```
 
-## Как запустить
+## Installation
 
-```bash
-python server.py
-```
-
-Сервер запустится на порту 8080, чтобы проверить его работу перейдите в браузере на страницу [http://127.0.0.1:8080/](http://127.0.0.1:8080/).
-
-## Как развернуть на сервере
+Use git to download the download service.
 
 ```bash
-python server.py
+$ git clone https://github.com/elzzz/async-download-service.git
 ```
 
-После этого перенаправить на микросервис запросы, начинающиеся с `/arhive/`. Например:
+## Usage
+
+```bash
+$ cd async-download-service
+$ docker-compose up -d
+```
+
+Service starts on port 8080. To check how it's working. [http://127.0.0.1:8080/](http://127.0.0.1:8080/).
+
+Afterwards, you can try to download files from `/archive/`. Example:
 
 ```
 GET http://host.ru/archive/3bea29ccabbbf64bdebcc055319c5745/
 GET http://host.ru/archive/af1ad8c76fda2e48ea9aed2937e972ea/
 ```
 
-# Цели проекта
+## Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-Код написан в учебных целях — это урок в курсе по Python и веб-разработке на сайте [Devman](https://dvmn.org).
+## License
+[MIT](https://choosealicense.com/licenses/mit/)   
