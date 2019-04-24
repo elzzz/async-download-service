@@ -6,16 +6,10 @@ import aiofiles
 import logging
 from functools import partial
 
-INTERVAL_SECS = 1
 
-
-async def archivate(request, photos_dir_path=None, download_speed_limit=False):
+async def archivate(request, photos_dir_path='/photos', download_speed_limit=False, **kwargs):
     archive_hash = request.match_info['archive_hash']
-
-    if photos_dir_path:
-        archivate_path = f'{photos_dir_path}/{archive_hash}'
-    else:
-        archivate_path = f'/photos/{archive_hash}'
+    archivate_path = f'{photos_dir_path}/{archive_hash}'
 
     if not os.path.exists(archivate_path):
         logging.error('Archive does not exist')
@@ -60,25 +54,21 @@ def init_app():
     app = web.Application()
     app.add_routes([
         web.get('/', handle_index_page),
-        web.get('/archive/{archive_hash}/', partial(archivate, photos_dir_path=args.photos_dir_path,
-                                                    download_speed_limit=args.download_speed_limit)),
+        web.get('/archive/{archive_hash}/', partial(archivate, **kwargs)),
     ])
     return app
 
 
-def main():
-    if args.logs:
-        logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
-                            level=logging.INFO)
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='AioHttp server with photos hosting')
+    parser.add_argument('-v', '--verbose', type=int, choices=[0, 10, 20, 30, 40, 50], default=0,
+                        help='Increase output verbosity.')
+    parser.add_argument('-d', '--download-speed-limit', action='store_true', help='Add download limit speed.')
+    parser.add_argument('-p', '--photos-dir-path', help='Custom path to files to archive.')
+    kwargs = {k: v for k, v in vars(parser.parse_args()).items() if v is not None}
+
+    logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
+                        level=kwargs['verbose'])
 
     app = init_app()
     web.run_app(app)
-
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='AioHttp server with photos hosting')
-    parser.add_argument('--logs', action='store_true')
-    parser.add_argument('--download-speed-limit', action='store_true')
-    parser.add_argument('--photos-dir-path')
-    args = parser.parse_args()
-    main()

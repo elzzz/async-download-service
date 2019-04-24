@@ -1,11 +1,7 @@
 FROM python:3.7
 
-ENV PROJECT_DIR /app
+RUN apt update && apt install -y zip && rm -rf /var/lib/apt/lists/*
 
-WORKDIR ${PROJECT_DIR}
-COPY . ${PROJECT_DIR}
-
-RUN apt update
-RUN apt install -y zip
-RUN pip install -r requirements.txt
-
+COPY requirements.txt /tmp/
+RUN pip install -r /tmp/requirements.txt
+COPY src /app

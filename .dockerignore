@@ -1,9 +1,0 @@
-**/.git
-**/.idea
-**/.DS_Store
-**/.gitignore
-**/.dockerignore
-
-Dockerfile
-docker-compose.yml
-test_photos
